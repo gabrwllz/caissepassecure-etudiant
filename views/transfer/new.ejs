@@ -14,6 +14,8 @@
     </div>
     
     <form action="/transfer/confirm" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
       <input type="hidden" name="recipient_id" value="<%= recipient.id %>">
       <input type="hidden" name="amount" value="<%= amount %>">
       <input type="hidden" name="description" value="<%= description || '' %>">
@@ -32,6 +34,8 @@
       </div>
       
       <form action="/transfer/new" method="POST" id="transfer-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        
         <input type="hidden" id="balance" value="<%= balance %>">
         
         <div class="form-group">

@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const Database = require('better-sqlite3');
 const path = require('path');
 
@@ -60,7 +61,7 @@ const users = [
   {
     name: 'Alice Dupont',
     email: 'alice@test.com',
-    password: 'alice123',
+    password: bcrypt.hashSync('alice123', 10),
     bio: `Cliente fidèle depuis ${new Date().getFullYear()}`,
     balance: 2500.0,
     role: 'user',
@@ -68,7 +69,7 @@ const users = [
   {
     name: 'Bob Martin',
     email: 'bob@test.com',
-    password: 'bob123',
+    password: bcrypt.hashSync('bob123', 10),
     bio: 'Entrepreneur passionné',
     balance: 850.0,
     role: 'user',
@@ -76,7 +77,7 @@ const users = [
   {
     name: 'Diana Ross',
     email: 'diana@test.com',
-    password: 'diana123',
+    password: bcrypt.hashSync('diana123', 10),
     bio: 'Étudiante en finance',
     balance: 150.0,
     role: 'user',
@@ -84,7 +85,7 @@ const users = [
   {
     name: 'Charlie Admin',
     email: 'admin@caissepassecure.com',
-    password: 'admin123',
+    password: bcrypt.hashSync('admin123', 10),
     bio: 'Administrateur système',
     balance: 10000.0,
     role: 'admin',

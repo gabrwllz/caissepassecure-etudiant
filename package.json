@@ -8,11 +8,13 @@
     "init-db": "node database/init.js"
   },
   "dependencies": {
-    "express": "^5.2.1",
-    "express-session": "1.15.6",
-    "ejs": "^4.0.1",
-    "express-ejs-layouts": "^2.5.1",
+    "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.6.2",
-    "dotenv": "^17.2.3"
+    "csurf": "^1.11.0",
+    "dotenv": "^17.2.3",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "1.15.6"
   }
 }

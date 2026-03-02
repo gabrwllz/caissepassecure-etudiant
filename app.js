@@ -1,4 +1,5 @@
 require('dotenv').config();
+const csrf = require('csurf');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
@@ -46,9 +47,16 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: { secure: false, sameSite: 'strict' },
   }),
 );
+
+app.use(csrf());
+
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 
 // Variables globales pour les vues
 app.use((req, res, next) => {
@@ -72,6 +80,10 @@ app.use('/transactions', transactionsRoutes);
 app.use('/admin', adminRoutes);
 
 app.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).send('Requête invalide (CSRF)');
+  }
+
   if (process.env.DEBUG === 'true') {
     res.status(500).send(`
       <h1>Erreur serveur</h1>

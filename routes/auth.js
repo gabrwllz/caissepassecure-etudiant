@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
 const Database = require('better-sqlite3');
@@ -13,15 +15,22 @@ router.get('/login', (req, res) => {
 });
 
 // Traitement de la connexion
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+  const getUserByEmail = db.prepare('SELECT * FROM users WHERE email = ?');
 
   try {
-    const user = db.prepare(query).get();
+    const user = getUserByEmail.get(email);
 
     if (user) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (!passwordMatch) {
+        req.session.error = 'Identifiants invalides';
+        return res.redirect('/auth/login');
+      }
+
       if (user.active === 0) {
         req.session.error = 'Ce compte a été désactivé';
         return res.redirect('/auth/login');
@@ -36,17 +45,10 @@ router.post('/login', (req, res) => {
       };
 
       req.session.success = `Bienvenue, ${user.name} !`;
-      res.redirect('/account/dashboard');
+      return res.redirect('/account/dashboard');
     } else {
-      const emailCheck = db
-        .prepare(`SELECT * FROM users WHERE email = '${email}'`)
-        .get();
-      if (emailCheck) {
-        req.session.error = 'Mot de passe incorrect';
-      } else {
-        req.session.error = 'Aucun compte associé à cet email';
-      }
-      res.redirect('/auth/login');
+      req.session.error = 'Identifiants invalides';
+      return res.redirect('/auth/login');
     }
   } catch (err) {
     if (process.env.DEBUG === 'true') {
@@ -54,7 +56,7 @@ router.post('/login', (req, res) => {
     } else {
       req.session.error = 'Une erreur est survenue';
     }
-    res.redirect('/auth/login');
+    return res.redirect('/auth/login');
   }
 });
 
@@ -64,7 +66,7 @@ router.get('/register', (req, res) => {
 });
 
 // Traitement de l'inscription
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   const { name, email, password, password_confirm } = req.body;
 
   if (password !== password_confirm) {
@@ -78,15 +80,16 @@ router.post('/register', (req, res) => {
       .prepare('SELECT id FROM users WHERE email = ?')
       .get(email);
     if (existing) {
-      req.session.error = 'Cet email est déjà utilisé';
+      req.session.error = "Erreur lors de l'inscription";
       return res.redirect('/auth/register');
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = db
       .prepare(
         'INSERT INTO users (name, email, password, balance) VALUES (?, ?, ?, ?)',
       )
-      .run(name, email, password, 100.0);
+      .run(name, email, hashedPassword, 100.0);
 
     req.session.success =
       'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
@@ -109,16 +112,17 @@ router.post('/forgot-password', (req, res) => {
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
   if (user) {
-    const token = Date.now().toString();
+    const token = crypto.randomBytes(32).toString('hex');
 
     db.prepare(
       'INSERT INTO password_resets (user_id, token) VALUES (?, ?)',
     ).run(user.id, token);
 
     // En vrai, on enverrait un email. Ici on affiche le lien pour le TP.
-    req.session.success = `Lien de réinitialisation (simulé) : /auth/reset-password?token=${token}`;
+    req.session.success = `Si un compte existe, un lien de réinitialisation (simulé) a été généré : /auth/reset-password?token=${token}`;
   } else {
-    req.session.error = 'Aucun compte associé à cet email';
+    req.session.success =
+      'Si un compte existe, un lien de réinitialisation a été envoyé.';
   }
 
   res.redirect('/auth/forgot-password');
@@ -134,7 +138,7 @@ router.get('/reset-password', (req, res) => {
 });
 
 // Traitement réinitialisation
-router.post('/reset-password', (req, res) => {
+router.post('/reset-password', async (req, res) => {
   const { token, password, password_confirm } = req.body;
 
   if (password !== password_confirm) {
@@ -143,12 +147,16 @@ router.post('/reset-password', (req, res) => {
   }
 
   const reset = db
-    .prepare('SELECT * FROM password_resets WHERE token = ?')
+    .prepare(
+      `SELECT * FROM password_resets WHERE token = ? AND created_at >= datetime('now', '-1 hour')`,
+    )
     .get(token);
 
   if (reset) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     db.prepare('UPDATE users SET password = ? WHERE id = ?').run(
-      password,
+      hashedPassword,
       reset.user_id,
     );
     db.prepare('DELETE FROM password_resets WHERE id = ?').run(reset.id);

@@ -7,6 +7,8 @@
     </div>
     
     <form action="/account/profile" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      
       <input type="hidden" name="id" value="<%= account.id %>">
       
       <div class="form-group">
@@ -45,6 +47,8 @@
     </div>
     
     <form action="/account/profile/avatar" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
       <div class="form-group">
         <label for="avatar_url" class="form-label">URL de l'image</label>
         <input type="url" id="avatar_url" name="avatar_url" class="form-input" placeholder="https://exemple.com/photo.jpg">
