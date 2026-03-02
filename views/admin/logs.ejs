@@ -1,0 +1,47 @@
+<h1>Logs d'activité</h1>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Actions récentes</h3>
+    <span class="badge badge-user"><%= logs.length %> entrées</span>
+  </div>
+  
+  <% if (logs && logs.length > 0) { %>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Utilisateur</th>
+            <th>Action</th>
+            <th>Détails</th>
+            <th>Adresse IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(function(log) { %>
+            <tr>
+              <td><%= formatDate(log.created_at) %></td>
+              <td>
+                <% if (log.user_name) { %>
+                  <%= log.user_name %>
+                <% } else { %>
+                  <em>Système</em>
+                <% } %>
+              </td>
+              <td><span class="badge badge-user"><%= log.action %></span></td>
+              <td><%= log.details || '-' %></td>
+              <td><code><%= log.ip_address || '-' %></code></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <p class="text-muted">Aucun log à afficher.</p>
+  <% } %>
+</div>
+
+<div class="mt-3">
+  <a href="/admin/dashboard" class="btn btn-outline">Retour au tableau de bord</a>
+</div>

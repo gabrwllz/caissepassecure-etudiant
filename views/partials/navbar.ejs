@@ -1,0 +1,37 @@
+<header class="header">
+  <div class="header-container">
+    <a href="/" class="logo">
+      <span class="logo-icon">🏦</span>
+      <span>CaissePasSecure</span>
+    </a>
+    
+    <nav class="nav">
+      <% if (user) { %>
+        <a href="/account/dashboard" class="nav-link">Mon compte</a>
+        <a href="/transfer/new" class="nav-link">Transfert</a>
+        <a href="/transactions/history" class="nav-link">Historique</a>
+        
+        <% if (user.role === 'admin') { %>
+          <a href="/admin/dashboard" class="nav-link">Administration</a>
+        <% } %>
+        
+        <div class="nav-user">
+          <a href="/account/profile" class="nav-user-avatar">
+            <% if (user.avatar_url) { %>
+              <img src="<%= user.avatar_url %>" alt="Avatar" class="avatar avatar-nav">
+            <% } else { %>
+              <div class="avatar avatar-nav avatar-placeholder">
+                <%= user.name.charAt(0).toUpperCase() %>
+              </div>
+            <% } %>
+          </a>
+          <span class="nav-user-name"><%= user.name %></span>
+          <a href="/auth/logout" class="nav-link">Déconnexion</a>
+        </div>
+      <% } else { %>
+        <a href="/auth/login" class="nav-link">Connexion</a>
+        <a href="/auth/register" class="nav-link">Inscription</a>
+      <% } %>
+    </nav>
+  </div>
+</header>

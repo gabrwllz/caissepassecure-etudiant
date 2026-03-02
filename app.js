@@ -1,0 +1,90 @@
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const ejsLayouts = require('express-ejs-layouts');
+
+const authRoutes = require('./routes/auth');
+const accountRoutes = require('./routes/account');
+const transferRoutes = require('./routes/transfer');
+const transactionsRoutes = require('./routes/transactions');
+const adminRoutes = require('./routes/admin');
+
+const app = express();
+
+// Configuration EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(ejsLayouts);
+app.set('layout', 'layouts/main');
+
+// Helpers disponibles dans toutes les vues
+app.locals.formatDate = (date) => {
+  return new Date(date).toLocaleDateString('fr-CA', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+app.locals.formatMoney = (amount) => {
+  return new Intl.NumberFormat('fr-CA', {
+    style: 'currency',
+    currency: 'CAD',
+  }).format(amount);
+};
+
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  }),
+);
+
+// Variables globales pour les vues
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  res.locals.success = req.session.success;
+  res.locals.error = req.session.error;
+  delete req.session.success;
+  delete req.session.error;
+  next();
+});
+
+// Routes
+app.get('/', (req, res) => {
+  res.render('home', { title: 'Accueil' });
+});
+
+app.use('/auth', authRoutes);
+app.use('/account', accountRoutes);
+app.use('/transfer', transferRoutes);
+app.use('/transactions', transactionsRoutes);
+app.use('/admin', adminRoutes);
+
+app.use((err, req, res, next) => {
+  if (process.env.DEBUG === 'true') {
+    res.status(500).send(`
+      <h1>Erreur serveur</h1>
+      <pre>${err.stack}</pre>
+      <p>Query: ${JSON.stringify(req.query)}</p>
+      <p>Body: ${JSON.stringify(req.body)}</p>
+    `);
+  } else {
+    res.status(500).render('error', { message: 'Une erreur est survenue' });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`CaissePasSecure démarré sur http://localhost:${PORT}`);
+});

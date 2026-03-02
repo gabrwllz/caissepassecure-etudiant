@@ -1,0 +1,49 @@
+<h1>Historique des transactions</h1>
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Toutes vos transactions</h3>
+    <a href="/transactions/search" class="btn btn-outline btn-sm">Rechercher</a>
+  </div>
+  
+  <% if (transactions && transactions.length > 0) { %>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>De</th>
+            <th>Vers</th>
+            <th>Description</th>
+            <th class="text-right">Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% transactions.forEach(function(t) { %>
+            <tr>
+              <td><%= formatDate(t.created_at) %></td>
+              <td>
+                <% if (t.sender_name) { %>
+                  <%- t.sender_name %>
+                  <% if (t.from_user_id === currentUserId) { %><small>(vous)</small><% } %>
+                <% } else { %>
+                  <em>Système</em>
+                <% } %>
+              </td>
+              <td>
+                <%- t.receiver_name %>
+                <% if (t.to_user_id === currentUserId) { %><small>(vous)</small><% } %>
+              </td>
+              <td><%- t.description || '-' %></td>
+              <td class="text-right <%= t.from_user_id === currentUserId ? 'amount-negative' : 'amount-positive' %>">
+                <%= t.from_user_id === currentUserId ? '-' : '+' %><%= formatMoney(t.amount) %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <p class="text-muted">Aucune transaction à afficher.</p>
+  <% } %>
+</div>

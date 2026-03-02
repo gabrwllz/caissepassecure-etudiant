@@ -1,0 +1,64 @@
+<h1>Tableau de bord</h1>
+
+<% if (typeof isOwnAccount !== 'undefined' && !isOwnAccount) { %>
+  <div class="alert alert-warning">
+    Vous consultez le compte d'un autre utilisateur.
+  </div>
+<% } %>
+
+<%- include('../partials/account-card', { account: account }) %>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Actions rapides</h3>
+    </div>
+    <div class="actions" style="flex-direction: column; gap: 1rem;">
+      <a href="/transfer/new" class="btn btn-primary btn-block">Nouveau transfert</a>
+      <a href="/transactions/history" class="btn btn-outline btn-block">Voir tout l'historique</a>
+      <a href="/account/profile" class="btn btn-outline btn-block">Modifier mon profil</a>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Dernières transactions</h3>
+    </div>
+    
+    <% if (transactions && transactions.length > 0) { %>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% transactions.forEach(function(t) { %>
+              <tr>
+                <td><%= formatDate(t.created_at) %></td>
+                <td>
+                  <% if (t.from_user_id === account.id) { %>
+                    Envoyé à <%- t.receiver_name %>
+                  <% } else { %>
+                    Reçu de <%- t.sender_name || 'Système' %>
+                  <% } %>
+                  <% if (t.description) { %>
+                    <br><small class="text-muted"><%- t.description %></small>
+                  <% } %>
+                </td>
+                <td class="<%= t.from_user_id === account.id ? 'amount-negative' : 'amount-positive' %>">
+                  <%= t.from_user_id === account.id ? '-' : '+' %><%= formatMoney(t.amount) %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <p class="text-muted">Aucune transaction récente.</p>
+    <% } %>
+  </div>
+</div>

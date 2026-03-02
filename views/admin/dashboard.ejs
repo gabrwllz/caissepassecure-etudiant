@@ -1,0 +1,74 @@
+<h1>Administration</h1>
+
+<div class="grid grid-4">
+  <div class="card stat-card">
+    <div class="stat-value"><%= stats.totalUsers %></div>
+    <div class="stat-label">Utilisateurs</div>
+  </div>
+
+  <div class="card stat-card">
+    <div class="stat-value"><%= stats.totalTransactions %></div>
+    <div class="stat-label">Transactions</div>
+  </div>
+
+  <div class="card stat-card">
+    <div class="stat-value"><%= formatMoney(stats.totalVolume) %></div>
+    <div class="stat-label">Volume total</div>
+  </div>
+
+  <div class="card stat-card">
+    <div class="stat-value"><%= stats.recentLogs %></div>
+    <div class="stat-label">Actions (24h)</div>
+  </div>
+</div>
+
+<div class="grid grid-2 mt-3">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Gestion</h3>
+    </div>
+    <div class="actions" style="flex-direction: column; gap: 1rem">
+      <a href="/admin/users" class="btn btn-primary btn-block"
+        >Gérer les utilisateurs</a
+      >
+      <a href="/admin/logs" class="btn btn-outline btn-block"
+        >Consulter les logs</a
+      >
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Informations système</h3>
+    </div>
+    <p><strong>Version :</strong> 1.0.0</p>
+    <p>
+      <strong>Environnement :</strong> <%= process.env.DEBUG === 'true' ?
+      'Développement' : 'Production' %>
+    </p>
+    <p><strong>Base de données :</strong> SQLite</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Outils développeur</h3>
+    </div>
+    <div class="actions" style="flex-direction: column; gap: 1rem">
+      <a href="/admin/debug/query" class="btn btn-outline btn-block"
+        >Console SQL</a
+      >
+      <a href="/admin/export/users" class="btn btn-outline btn-block"
+        >Exporter les utilisateurs</a
+      >
+      <a href="/admin/export/transactions" class="btn btn-outline btn-block"
+        >Exporter les transactions</a
+      >
+      <a href="/admin/export/logs" class="btn btn-outline btn-block"
+        >Exporter les logs</a
+      >
+    </div>
+    <p class="text-muted mt-2" style="font-size: 0.85rem">
+      ⚠️ Ces outils sont destinés au développement uniquement.
+    </p>
+  </div>
+</div>

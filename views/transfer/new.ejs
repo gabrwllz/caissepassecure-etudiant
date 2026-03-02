@@ -1,0 +1,56 @@
+<h1><%= typeof confirmation !== 'undefined' && confirmation ? 'Confirmer le transfert' : 'Nouveau transfert' %></h1>
+
+<div class="auth-container" style="max-width: 500px;">
+  <% if (typeof confirmation !== 'undefined' && confirmation) { %>
+    <!-- Page de confirmation -->
+    <div class="confirmation-box">
+      <p>Vous êtes sur le point d'envoyer</p>
+      <div class="confirmation-amount"><%= formatMoney(amount) %></div>
+      <p class="confirmation-recipient">à <strong><%= recipient.name %></strong> (<%= recipient.email %>)</p>
+      
+      <% if (description) { %>
+        <p class="mt-2 text-muted">« <%- description %> »</p>
+      <% } %>
+    </div>
+    
+    <form action="/transfer/confirm" method="POST">
+      <input type="hidden" name="recipient_id" value="<%= recipient.id %>">
+      <input type="hidden" name="amount" value="<%= amount %>">
+      <input type="hidden" name="description" value="<%= description || '' %>">
+      
+      <div class="confirmation-buttons">
+        <a href="/transfer/new" class="btn btn-outline">Annuler</a>
+        <button type="submit" class="btn btn-primary">Confirmer le transfert</button>
+      </div>
+    </form>
+    
+  <% } else { %>
+    <!-- Formulaire de transfert -->
+    <div class="card">
+      <div class="alert alert-info">
+        Votre solde actuel : <strong><%= formatMoney(balance) %></strong>
+      </div>
+      
+      <form action="/transfer/new" method="POST" id="transfer-form">
+        <input type="hidden" id="balance" value="<%= balance %>">
+        
+        <div class="form-group">
+          <label for="recipient_email" class="form-label">Email du destinataire</label>
+          <input type="email" id="recipient_email" name="recipient_email" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="amount" class="form-label">Montant ($)</label>
+          <input type="number" id="amount" name="amount" class="form-input" step="0.01" min="0.01" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="description" class="form-label">Description (optionnel)</label>
+          <input type="text" id="description" name="description" class="form-input" placeholder="Ex: Remboursement restaurant">
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">Continuer</button>
+      </form>
+    </div>
+  <% } %>
+</div>

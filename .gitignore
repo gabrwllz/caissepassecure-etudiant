@@ -1,0 +1,12 @@
+# Dépendances
+node_modules/
+
+# Base de données
+database/*.db
+
+# Logs
+*.log
+
+# Système
+.DS_Store
+Thumbs.db

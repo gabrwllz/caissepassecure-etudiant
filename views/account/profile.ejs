@@ -1,0 +1,71 @@
+<h1>Mon profil</h1>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Informations personnelles</h3>
+    </div>
+    
+    <form action="/account/profile" method="POST">
+      <input type="hidden" name="id" value="<%= account.id %>">
+      
+      <div class="form-group">
+        <label for="name" class="form-label">Nom complet</label>
+        <input type="text" id="name" name="name" class="form-input" value="<%= account.name %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="email" class="form-label">Adresse email</label>
+        <input type="email" id="email" name="email" class="form-input" value="<%= account.email %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="bio" class="form-label">Biographie</label>
+        <textarea id="bio" name="bio" class="form-textarea"><%= account.bio || '' %></textarea>
+        <p class="form-hint">Quelques mots sur vous (optionnel)</p>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+  </div>
+  
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Photo de profil</h3>
+    </div>
+    
+    <div class="text-center mb-3">
+      <% if (account.avatar_url) { %>
+        <img src="<%= account.avatar_url %>" alt="Avatar" class="avatar avatar-lg">
+      <% } else { %>
+        <div class="avatar avatar-lg" style="display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; background-color: var(--color-primary); color: white;">
+          <%= account.name.charAt(0).toUpperCase() %>
+        </div>
+      <% } %>
+    </div>
+    
+    <form action="/account/profile/avatar" method="POST">
+      <div class="form-group">
+        <label for="avatar_url" class="form-label">URL de l'image</label>
+        <input type="url" id="avatar_url" name="avatar_url" class="form-input" placeholder="https://exemple.com/photo.jpg">
+        <p class="form-hint">Entrez l'URL d'une image pour votre avatar</p>
+      </div>
+      
+      <button type="submit" class="btn btn-outline">Mettre à jour l'avatar</button>
+    </form>
+    
+    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--color-border);">
+    
+    <div class="card-header">
+      <h3 class="card-title">Aperçu du profil</h3>
+    </div>
+    
+    <p><strong>Membre depuis :</strong> <%= formatDate(account.created_at) %></p>
+    <p><strong>Rôle :</strong> <span class="badge badge-<%= account.role %>"><%= account.role %></span></p>
+    
+    <% if (account.bio) { %>
+      <p class="mt-2"><strong>Bio :</strong></p>
+      <p><%- account.bio %></p>
+    <% } %>
+  </div>
+</div>
