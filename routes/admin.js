@@ -154,7 +154,13 @@ router.get('/debug/query', isAuthenticated, isAdmin, (req, res) => {
 
 // Export des données (fonctionnalité admin)
 router.get('/export/:table', isAuthenticated, isAdmin, (req, res) => {
+  const allowedTables = ['users', 'transactions', 'logs'];
+
   const table = req.params.table;
+
+  if (!allowedTables.includes(table)) {
+    return res.status(400).json({ error: 'Requête indisponible' });
+  }
 
   try {
     const data = db.prepare(`SELECT * FROM ${table}`).all();
