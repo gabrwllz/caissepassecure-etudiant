@@ -83,15 +83,13 @@ app.use((err, req, res, next) => {
   if (err.code === 'EBADCSRFTOKEN') {
     return res.status(403).send('Requête invalide (CSRF)');
   }
-
   if (process.env.DEBUG === 'true') {
-    res.status(500).send(`
-      <h1>Erreur serveur</h1>
-      <pre>${err.stack}</pre>
-      <p>Query: ${JSON.stringify(req.query)}</p>
-      <p>Body: ${JSON.stringify(req.body)}</p>
-    `);
-  } else {
+    return res.status(500).send(`
+    <h1>Erreur Serveur</h1>
+    <p>${err.message}</p>
+  `);
+  }
+    else {
     res.status(500).render('error', { message: 'Une erreur est survenue' });
   }
 });
