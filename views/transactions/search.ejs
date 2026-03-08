@@ -33,7 +33,7 @@
 </div>
 
 <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
-  <p class="mt-3">Résultats pour : <strong><%- searchQuery %></strong></p>
+  <p class="mt-3">Résultats pour : <strong><%= searchQuery %></strong></p>
 <% } %>
 
 <% if (typeof transactions !== 'undefined' && transactions !== null) { %>
@@ -54,9 +54,9 @@
             <% transactions.forEach(function(t) { %>
               <tr>
                 <td><%= formatDate(t.created_at) %></td>
-                <td><%- t.sender_name || 'Système' %></td>
-                <td><%- t.receiver_name %></td>
-                <td><%- t.description || '-' %></td>
+                <td><%= t.sender_name || 'Système' %></td>
+                <td><%= t.receiver_name %></td>
+                <td><%= t.description || '-' %></td>
                 <td class="text-right"><%= formatMoney(t.amount) %></td>
               </tr>
             <% }); %>

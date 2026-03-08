@@ -49,6 +49,7 @@
     <p><strong>Base de données :</strong> SQLite</p>
   </div>
 
+  <% if (process.env.DEBUG === 'true') { %>
   <div class="card">
     <div class="card-header">
       <h3 class="card-title">Outils développeur</h3>
@@ -71,4 +72,5 @@
       ⚠️ Ces outils sont destinés au développement uniquement.
     </p>
   </div>
+  <% } %>
 </div>
