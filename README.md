@@ -10,6 +10,12 @@ Application bancaire simplifiée pour l'apprentissage de la sécurité des appli
 npm install
 ```
 
+1.5  Mettre à jour la dépendance de express-session :
+
+```bash
+npm install express-session@latest –save 
+```
+
 2. Copier le fichier de configuration :
 
 ```bash
