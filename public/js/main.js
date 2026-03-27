@@ -35,12 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
         alert('Les mots de passe ne correspondent pas');
         return;
       }
-
-      if (password.length < 4) {
-        e.preventDefault();
-        alert('Le mot de passe doit contenir au moins 4 caractères');
-        return;
-      }
     });
   }
 

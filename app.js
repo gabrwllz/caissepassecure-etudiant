@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const ejsLayouts = require('express-ejs-layouts');
+const rateLimit = require('express-rate-limit');
 
 const authRoutes = require('./routes/auth');
 const accountRoutes = require('./routes/account');
@@ -68,6 +69,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// Rate limiting sur le login
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message:
+    'Trop de tentatives de connexion. Veuillez réessayer ultérieurement.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/auth/login', loginLimiter);
+
 // Routes
 app.get('/', (req, res) => {
   res.render('home', { title: 'Accueil' });
@@ -88,8 +101,7 @@ app.use((err, req, res, next) => {
     <h1>Erreur Serveur</h1>
     <p>${err.message}</p>
   `);
-  }
-    else {
+  } else {
     res.status(500).render('error', { message: 'Une erreur est survenue' });
   }
 });

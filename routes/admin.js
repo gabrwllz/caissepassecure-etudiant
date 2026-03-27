@@ -133,7 +133,7 @@ router.get('/debug/query', isAuthenticated, isAdmin, (req, res) => {
   // Check if we're in a production environment
   if (process.env.DEBUG === 'false') {
     return res.status(403).json({
-      message: 'L\'outil de debug n\'est pas disponible en production.',
+      message: "L'outil de debug n'est pas disponible en production.",
     });
   }
 

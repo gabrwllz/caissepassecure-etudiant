@@ -13,7 +13,7 @@ npm install
 1.5  Mettre à jour la dépendance de express-session :
 
 ```bash
-npm install express-session@latest –save 
+npm install express-session@latest
 ```
 
 2. Copier le fichier de configuration :

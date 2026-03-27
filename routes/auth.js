@@ -83,6 +83,14 @@ router.post('/register', async (req, res) => {
       req.session.error = "Erreur lors de l'inscription";
       return res.redirect('/auth/register');
     }
+    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      req.session.error =
+        'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.';
+      return res.redirect('/auth/register');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = db

@@ -61,7 +61,7 @@ const users = [
   {
     name: 'Alice Dupont',
     email: 'alice@test.com',
-    password: bcrypt.hashSync('alice123', 10),
+    password: bcrypt.hashSync('A1!ceD#2025$Secure', 10),
     bio: `Cliente fidèle depuis ${new Date().getFullYear()}`,
     balance: 2500.0,
     role: 'user',
@@ -69,7 +69,7 @@ const users = [
   {
     name: 'Bob Martin',
     email: 'bob@test.com',
-    password: bcrypt.hashSync('bob123', 10),
+    password: bcrypt.hashSync('B0b@M4rtin!2025', 10),
     bio: 'Entrepreneur passionné',
     balance: 850.0,
     role: 'user',
@@ -77,7 +77,7 @@ const users = [
   {
     name: 'Diana Ross',
     email: 'diana@test.com',
-    password: bcrypt.hashSync('diana123', 10),
+    password: bcrypt.hashSync('D!an4R0ss#2025', 10),
     bio: 'Étudiante en finance',
     balance: 150.0,
     role: 'user',
@@ -85,7 +85,7 @@ const users = [
   {
     name: 'Charlie Admin',
     email: 'admin@caissepassecure.com',
-    password: bcrypt.hashSync('admin123', 10),
+    password: bcrypt.hashSync('Adm!n@C4isse#2025', 10),
     bio: 'Administrateur système',
     balance: 10000.0,
     role: 'admin',
