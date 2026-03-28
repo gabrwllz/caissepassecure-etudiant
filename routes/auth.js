@@ -27,14 +27,18 @@ router.post('/login', async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (!passwordMatch) {
+        console.warn(`[LOGIN FAILED] email=${email} reason=wrong_password`);
         req.session.error = 'Identifiants invalides';
         return res.redirect('/auth/login');
       }
 
       if (user.active === 0) {
+        console.warn(`[LOGIN FAILED] email=${email} reason=account_disabled`);
         req.session.error = 'Ce compte a été désactivé';
         return res.redirect('/auth/login');
       }
+
+      console.log(`[LOGIN SUCCESS] user=${user.email} id=${user.id}`);
 
       req.session.user = {
         id: user.id,
@@ -47,10 +51,13 @@ router.post('/login', async (req, res) => {
       req.session.success = `Bienvenue, ${user.name} !`;
       return res.redirect('/account/dashboard');
     } else {
+      console.warn(`[LOGIN FAILED] email=${email} reason=user_not_found`);
       req.session.error = 'Identifiants invalides';
       return res.redirect('/auth/login');
     }
   } catch (err) {
+    console.error(`[LOGIN ERROR] email=${email} error=${err.message}`);
+
     if (process.env.DEBUG === 'true') {
       req.session.error = `Erreur SQL: ${err.message}`;
     } else {
@@ -83,7 +90,7 @@ router.post('/register', async (req, res) => {
       req.session.error = "Erreur lors de l'inscription";
       return res.redirect('/auth/register');
     }
-    
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(password)) {
       req.session.error =
