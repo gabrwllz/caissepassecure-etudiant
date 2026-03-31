@@ -10,7 +10,7 @@ const db = new Database(
 
 // Historique des transactions
 router.get('/history', isAuthenticated, (req, res) => {
-  const userId = req.query.user_id || req.session.user.id;
+  const userId = req.session.user.id;
 
   const transactions = db
     .prepare(
@@ -21,8 +21,8 @@ router.get('/history', isAuthenticated, (req, res) => {
            receiver.name as receiver_name,
            receiver.email as receiver_email
     FROM transactions t
-    LEFT JOIN users sender ON t.from_user_id = sender.id
-    JOIN users receiver ON t.to_user_id = receiver.id
+           LEFT JOIN users sender ON t.from_user_id = sender.id
+           JOIN users receiver ON t.to_user_id = receiver.id
     WHERE t.from_user_id = ? OR t.to_user_id = ?
     ORDER BY t.created_at DESC
   `,
@@ -32,9 +32,10 @@ router.get('/history', isAuthenticated, (req, res) => {
   res.render('transactions/history', {
     title: 'Historique des transactions',
     transactions,
-    currentUserId: parseInt(userId),
+    currentUserId: userId,
   });
 });
+
 
 // Recherche de transactions
 router.get('/search', isAuthenticated, (req, res) => {

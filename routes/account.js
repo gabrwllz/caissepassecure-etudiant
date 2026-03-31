@@ -10,7 +10,7 @@ const db = new Database(
 
 // Dashboard du compte
 router.get('/dashboard', isAuthenticated, (req, res) => {
-  const userId = req.query.id || req.session.user.id;
+  const userId = req.session.user.id;
 
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
 
@@ -57,19 +57,17 @@ router.get('/profile', isAuthenticated, (req, res) => {
 
 // Modification du profil
 router.post('/profile', isAuthenticated, (req, res) => {
-  const { id, name, email, bio, avatar_url } = req.body;
+  const { name, email, bio, avatar_url } = req.body;
+  const userId = req.session.user.id;
 
   try {
     db.prepare(
-      'UPDATE users SET name = ?, email = ?, bio = ?, avatar_url = ? WHERE id = ?',
-    ).run(name, email, bio, avatar_url, id);
+        'UPDATE users SET name = ?, email = ?, bio = ?, avatar_url = ? WHERE id = ?',
+    ).run(name, email, bio, avatar_url, userId);
 
-    // Mettre à jour la session si c'est le propre profil
-    if (parseInt(id) === req.session.user.id) {
-      req.session.user.name = name;
-      req.session.user.email = email;
-      req.session.user.avatar_url = avatar_url;
-    }
+    req.session.user.name = name;
+    req.session.user.email = email;
+    req.session.user.avatar_url = avatar_url;
 
     req.session.success = 'Profil mis à jour avec succès';
   } catch (err) {
