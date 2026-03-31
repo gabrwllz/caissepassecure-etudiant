@@ -10,7 +10,7 @@ const db = new Database(
 );
 
 // Dashboard admin
-router.get('/dashboard', isAuthenticated, (req, res) => {
+router.get('/dashboard', isAuthenticated, isAdmin, (req, res) => {
   const stats = {
     totalUsers: db.prepare('SELECT COUNT(*) as count FROM users').get().count,
     totalTransactions: db
@@ -109,7 +109,7 @@ router.post('/users/:id/delete', isAuthenticated, isAdmin, (req, res) => {
 });
 
 // Logs d'activité
-router.get('/logs', isAuthenticated, (req, res) => {
+router.get('/logs', isAuthenticated, isAdmin, (req, res) => {
   const logs = db
     .prepare(
       `
