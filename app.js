@@ -12,6 +12,10 @@ const transferRoutes = require('./routes/transfer');
 const transactionsRoutes = require('./routes/transactions');
 const adminRoutes = require('./routes/admin');
 
+const isAuthenticated = require('./middleware/auth');
+const isAdmin = require('./middleware/admin');
+
+
 const app = express();
 
 // Configuration EJS
@@ -90,7 +94,7 @@ app.use('/auth', authRoutes);
 app.use('/account', accountRoutes);
 app.use('/transfer', transferRoutes);
 app.use('/transactions', transactionsRoutes);
-app.use('/admin', adminRoutes);
+app.use('/admin', isAuthenticated, isAdmin, adminRoutes);
 
 app.use((err, req, res, next) => {
   if (err.code === 'EBADCSRFTOKEN') {
