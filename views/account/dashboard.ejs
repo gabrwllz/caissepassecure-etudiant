@@ -1,11 +1,5 @@
 <h1>Tableau de bord</h1>
 
-<% if (typeof isOwnAccount !== 'undefined' && !isOwnAccount) { %>
-  <div class="alert alert-warning">
-    Vous consultez le compte d'un autre utilisateur.
-  </div>
-<% } %>
-
 <%- include('../partials/account-card', { account: account }) %>
 
 <div class="grid grid-2">
